@@ -22,9 +22,11 @@
  * SOFTWARE.
  */
 
-package cl.ucn.disc.dsm.gszigethi.news;
+package cl.ucn.disc.dsm.gszigethi.news.services;
 
 import java.util.List;
+
+import cl.ucn.disc.dsm.gszigethi.news.model.News;
 
 /**
  * The Contracts of The News Project

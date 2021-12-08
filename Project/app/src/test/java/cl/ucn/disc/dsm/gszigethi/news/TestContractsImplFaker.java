@@ -29,6 +29,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import cl.ucn.disc.dsm.gszigethi.news.model.News;
+import cl.ucn.disc.dsm.gszigethi.news.services.Contracts;
+import cl.ucn.disc.dsm.gszigethi.news.services.ContractsImplFaker;
+
 /**
  * The Test Contracts Impl Faker
  * @author Gustavo Patricio szigethi Araya

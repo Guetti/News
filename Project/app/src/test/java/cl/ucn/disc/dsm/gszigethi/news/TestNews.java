@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 
+import cl.ucn.disc.dsm.gszigethi.news.model.News;
 import lombok.extern.slf4j.Slf4j;
 
 /**

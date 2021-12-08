@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package cl.ucn.disc.dsm.gszigethi.news;
+package cl.ucn.disc.dsm.gszigethi.news.model;
 
 import net.openhft.hashing.LongHashFunction;
 

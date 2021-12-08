@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package cl.ucn.disc.dsm.gszigethi.news;
+package cl.ucn.disc.dsm.gszigethi.news.services;
 
 import com.github.javafaker.Faker;
 
@@ -32,6 +32,8 @@ import org.threeten.bp.ZonedDateTime;
 import java.util.ArrayList;
 
 import java.util.List;
+
+import cl.ucn.disc.dsm.gszigethi.news.model.News;
 
 /**
  * Contract Implementation of News with Faker
