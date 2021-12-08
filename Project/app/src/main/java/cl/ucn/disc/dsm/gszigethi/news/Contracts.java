@@ -24,16 +24,15 @@
 
 package cl.ucn.disc.dsm.gszigethi.news;
 
+import java.util.List;
+
 /**
  * The Contracts of The News Project
  * @author Gustavo Patricio Szigethi Araya
  **/
-
-import java.util.List;
-
-/**
- * @return all the News in the backend.
- */
 public interface Contracts {
+    /**
+     * @return all the News in the backend ordered by publishedAt
+     */
     List<News> retrieveNews();
 }
