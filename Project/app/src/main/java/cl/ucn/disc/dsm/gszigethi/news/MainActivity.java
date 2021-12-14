@@ -27,12 +27,43 @@ package cl.ucn.disc.dsm.gszigethi.news;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
+import com.github.javafaker.Faker;
+
+
+import org.threeten.bp.ZonedDateTime;
+
+import cl.ucn.disc.dsm.gszigethi.news.model.News;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TextView author = (TextView) findViewById(R.id.tv_author);
+
+    }
+
+    /**
+     * Create a new fake news using Faker
+     * @return The fake news
+     */
+    public News CreateFakeNews(){
+        Faker faker = new Faker();
+        String title = faker.university().name();
+        String source = faker.superhero().name();
+        String author = faker.book().author();
+        String url = faker.internet().url();
+        String urlImage = faker.internet().image();
+        String description = faker.superhero().descriptor();
+        String content = faker.shakespeare().hamletQuote();
+        ZonedDateTime time = ZonedDateTime.now();
+        News news = new News(title, source, author, url, urlImage, description, content, time);
+        return news;
     }
 }
