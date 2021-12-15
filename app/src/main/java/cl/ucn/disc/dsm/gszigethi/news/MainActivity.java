@@ -25,6 +25,7 @@
 package cl.ucn.disc.dsm.gszigethi.news;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.widget.TextView;
@@ -45,15 +46,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView author = (TextView) findViewById(R.id.tv_author);
-
     }
 
     /**
      * Create a new fake news using Faker
      * @return The fake news
      */
-    public News CreateFakeNews(){
+    public News CreateFakeNews(){ // Only for testing.
         Faker faker = new Faker();
         String title = faker.university().name();
         String source = faker.superhero().name();
