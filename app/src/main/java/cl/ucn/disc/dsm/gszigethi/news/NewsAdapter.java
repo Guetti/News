@@ -131,6 +131,14 @@ public final class NewsAdapter extends BaseAdapter {
     }
 
     /**
+     * Add all the {@link News} into the adapter.
+     * @param news the news to add.
+     */
+    public void setNews(List<News> news){
+        this.news.addAll(news);
+    }
+
+    /**
      * The ViewHolder.
      */
     private static class ViewHolder{
