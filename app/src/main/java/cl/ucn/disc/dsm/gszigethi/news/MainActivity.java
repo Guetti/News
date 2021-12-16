@@ -26,14 +26,27 @@ package cl.ucn.disc.dsm.gszigethi.news;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.github.javafaker.Faker;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 
 import org.threeten.bp.ZonedDateTime;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.util.List;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
 
@@ -42,10 +55,29 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * The News Adapter
+     */
+    protected NewsAdapter newsAdapter;
+
+    /**
+     *
+     * @param savedInstanceState the state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get the List (RecyclerView).
+        final RecyclerView recyclerView = findViewById(R.id.rv_news_list);
+        // The type of layout of RecyclerView
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+
+        // Build the Adapter
+        this.newsAdapter = new NewsAdapter();
+        // Union of Adapter + RecyclerView
+        recyclerView.setAdapter(this.newsAdapter);
     }
 
     /**
@@ -64,5 +96,45 @@ public class MainActivity extends AppCompatActivity {
         ZonedDateTime time = ZonedDateTime.now();
         News news = new News(title, source, author, url, urlImage, description, content, time);
         return news;
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Run in the background
+        AsyncTask.execute(() -> {
+            List<News> theNews;
+            try (final InputStream is = super.getApplication().getAssets()
+                    .open("news.json")) {
+
+                // Get the Type of List<News> with reflection
+                final Type newsListType = new TypeToken<List<News>>(){}.getType();
+
+                // The Reader
+                final Reader reader = new InputStreamReader(is);
+
+                // The json to object converter
+                final Gson gson = new GsonBuilder().create();
+
+                // Google Gson Black magic.
+                theNews = gson.fromJson(reader, newsListType);
+
+            } catch (IOException e){
+                e.printStackTrace();
+                return;
+            }
+
+            // Populate the Adapter
+            this.newsAdapter.setNews(theNews);
+
+            // Notify / Update the GUI
+            runOnUiThread(() -> {
+                this.newsAdapter.notifyDataSetChanged();
+            });
+        });
     }
 }
