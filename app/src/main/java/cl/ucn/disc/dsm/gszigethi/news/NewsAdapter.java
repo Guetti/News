@@ -29,11 +29,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +70,14 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
     }
 
     /**
+     * Add a news.
+     * @param news the news to add.
+     */
+    public void addNews(News news){
+        this.news.add(news);
+    }
+
+    /**
      * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
      * an item.
      * <p>
@@ -92,7 +103,7 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         // Step 1: Get the inflater
         final LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         // Step 2: Inflate the row of News
-        final View newsView = layoutInflater.inflate(R.layout.list_element, parent, false);
+        final View newsView = layoutInflater.inflate(R.layout.news_element, parent, false);
         // Step 3: Build the ViewHolder
         return new ViewHolder(newsView);
     }
@@ -125,7 +136,13 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         // Set the properties
         holder.author.setText(news.getAuthor());
         holder.title.setText(news.getTitle());
-        // TODO: Add all the properties.
+        holder.description.setText(news.getDescription());
+        holder.date.setText(news.getPublishedAt().toString());
+
+        Picasso.get().load(news.getUrlImage())
+                .error(R.drawable.ic_launcher_background)
+                .into(holder.image);
+
     }
 
     /**
@@ -143,14 +160,22 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
      * The ViewHolder.
      */
     protected static class ViewHolder extends RecyclerView.ViewHolder{
-        // TODO: Add all the attributes
+
         TextView author;
         TextView title;
+        TextView description;
+        TextView date;
+        ImageView image;
+
 
         public ViewHolder(View view){
             super(view);
-            this.author = view.findViewById(R.id.tv_author);
-            this.title = view.findViewById(R.id.tv_title);
+            this.author = view.findViewById(R.id.cv_tv_author);
+            this.title = view.findViewById(R.id.cv_tv_title);
+            this.description = view.findViewById(R.id.cv_tv_description);
+            this.date = view.findViewById(R.id.cv_tv_publishedAt);
+            this.image = view.findViewById(R.id.cv_img);
+
         }
     }
 }
