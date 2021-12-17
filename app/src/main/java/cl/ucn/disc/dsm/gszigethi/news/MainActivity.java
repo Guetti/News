@@ -39,6 +39,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 
+import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
@@ -76,36 +78,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Build the Adapter
         this.newsAdapter = new NewsAdapter();
+
+        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("-4"));
+
+        News news = new News("ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", zonedDateTime);
+
+        this.newsAdapter.addNews(news);
+
         // Union of Adapter + RecyclerView
         recyclerView.setAdapter(this.newsAdapter);
     }
 
-    /**
-     * Create a new fake news using Faker
-     * @return The fake news
-     */
-    public News CreateFakeNews(){ // Only for testing.
-        Faker faker = new Faker();
-        String title = faker.university().name();
-        String source = faker.superhero().name();
-        String author = faker.book().author();
-        String url = faker.internet().url();
-        String urlImage = faker.internet().image();
-        String description = faker.superhero().descriptor();
-        String content = faker.shakespeare().hamletQuote();
-        ZonedDateTime time = ZonedDateTime.now();
-        News news = new News(title, source, author, url, urlImage, description, content, time);
-        return news;
-    }
 
-    /**
-     *
-     */
-    @Override
-    protected void onStart() {
+    protected void onStart(){
         super.onStart();
-
-        // Run in the background
         AsyncTask.execute(() -> {
             List<News> theNews;
             try (final InputStream is = super.getApplication().getAssets()
@@ -128,13 +114,15 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            // Populate the Adapter
+            // Populate the adapter
             this.newsAdapter.setNews(theNews);
 
             // Notify / Update the GUI
             runOnUiThread(() -> {
+                // Run in UI thread
                 this.newsAdapter.notifyDataSetChanged();
             });
         });
     }
+
 }
