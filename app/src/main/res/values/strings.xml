@@ -24,4 +24,5 @@
 
 <resources>
     <string name="app_name">News</string>
+    <string name="the_image">The image</string>
 </resources>
