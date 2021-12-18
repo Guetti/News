@@ -2,6 +2,8 @@
 (c) Gustavo Patricio Szigethi Araya
 
 The News Project
+
+![Screenshot](Class%20diagram.png)
 ```
 @startuml
 package externals* #ffcccc {
