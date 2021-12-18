@@ -52,7 +52,13 @@ import java.util.List;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
 
+import cl.ucn.disc.dsm.gszigethi.news.services.retrofit.JsonPlaceHolderApi;
 import lombok.extern.slf4j.Slf4j;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 @Slf4j
 public class MainActivity extends AppCompatActivity {
@@ -79,24 +85,83 @@ public class MainActivity extends AppCompatActivity {
         // Build the Adapter
         this.newsAdapter = new NewsAdapter();
 
+
+
+        // TODO: Remove this.
+        // Create news for testing
+        // Create the zoned date time as now
         ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("-4"));
 
-        News news = new News("ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", zonedDateTime);
+        // Create the list of news
+        List<News> newsList = new ArrayList<>();
 
-        this.newsAdapter.addNews(news);
+        // Create some news
+        News news1 = new News("ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", zonedDateTime);
+        News news2 = new News(
+                "Windows 11: Windows Terminal wird neuer Standard für Kommandozeilen - ComputerBase",
+                "ComputerBase",
+                "Nicolas La Rocco",
+                "https://www.computerbase.de/2021-12/windows-11-windows-terminal-wird-neuer-standard-fuer-kommandozeilen/",
+                "https://pics.computerbase.de/1/0/1/7/0/7-576982f7519a42a4/article-1280x720.32d2af39.jpg",
+                "Microsoft will kommendes Jahr das Windows Terminal zum neuen Standard in Windows 11 für Kommandozeilenbefehle und Scripts machen.",
+                "Microsoft will kommendes Jahr das Windows Terminal zum neuen Standard in Windows 11 für Kommandozeilenbefehle und Scripts machen.",
+                zonedDateTime
+        );
+        News news3 = new News(
+                "Disney Plus adds support for Apple’s new SharePlay feature - The Siasat Daily",
+                "The Siasat Daily",
+                "IANS",
+                "https://www.siasat.com/disney-plus-adds-support-for-apples-new-shareplay-feature-2242300/",
+                "https://cdn.siasat.com/wp-content/uploads/2021/12/Disney-1.jpg",
+                "Disney has updated its subscription video on demand (SVOD) mobile app Disney Plus streaming with support for Apple's SharePlay feature.",
+                "Disney has updated its subscription video on demand (SVOD) mobile app Disney Plus streaming with support for Apple's SharePlay feature.",
+                zonedDateTime
+        );
+
+        // Add the news to the list of news
+        newsList.add(news1);
+        newsList.add(news2);
+        newsList.add(news3);
+
+        // Set the news into the adapter
+        this.newsAdapter.setNews(newsList);
 
         // Union of Adapter + RecyclerView
         recyclerView.setAdapter(this.newsAdapter);
     }
 
+    /**
+     * Get the news from NewsApi.org
+     */
+    // TODO: Get the news from news api
+    private void getNews(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://newsapi.org/v2/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
+        Call<List<News>> call = jsonPlaceHolderApi.getNews();
+        call.enqueue(new Callback<List<News>>() {
+            @Override
+            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
 
+            }
+
+            @Override
+            public void onFailure(Call<List<News>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    // FIXME: Error when load from json file
+    /*
     protected void onStart(){
         super.onStart();
         AsyncTask.execute(() -> {
             List<News> theNews;
             try (final InputStream is = super.getApplication().getAssets()
                     .open("news.json")) {
-
                 // Get the Type of List<News> with reflection
                 final Type newsListType = new TypeToken<List<News>>(){}.getType();
 
@@ -124,5 +189,5 @@ public class MainActivity extends AppCompatActivity {
             });
         });
     }
-
+    */
 }
