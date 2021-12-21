@@ -24,11 +24,9 @@
 
 package cl.ucn.disc.dsm.gszigethi.news;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -137,7 +135,10 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         holder.author.setText(news.getAuthor());
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getDescription());
-        holder.date.setText(news.getPublishedAt().toString());
+
+        String time = news.getPublishedAt().getYear() + "-" + news.getPublishedAt().getMonthValue() + "-" + news.getPublishedAt().getDayOfMonth();
+
+        holder.date.setText(time);
 
         Picasso.get().load(news.getUrlImage())
                 .error(R.drawable.ic_launcher_background)
@@ -178,4 +179,6 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
 
         }
     }
+
+
 }
