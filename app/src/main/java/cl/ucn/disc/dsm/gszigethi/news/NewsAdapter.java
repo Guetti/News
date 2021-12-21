@@ -66,7 +66,7 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
 
     /**
      * Populate the {@link List} of {@link News} with new data.
-     * @param news
+     * @param news the list of {@link News} to put in the adapter.
      */
     public void setNews(final List<News> news){
 
