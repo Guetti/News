@@ -141,7 +141,7 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         holder.date.setText(time);
 
         Picasso.get().load(news.getUrlImage())
-                .error(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_date)
                 .into(holder.image);
 
     }
