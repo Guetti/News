@@ -69,6 +69,7 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
      * @param news
      */
     public void setNews(final List<News> news){
+
         this.news.addAll(news);
     }
 
@@ -137,19 +138,26 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         final News news = this.news.get(position);
 
         // Set the properties
+        // Set the Author
         holder.author.setText(news.getAuthor());
+
+        // Set the Title
         holder.title.setText(news.getTitle());
+
+        // Set the description
         holder.description.setText(news.getDescription());
 
+        // Parse ZonedDateTime to Instant
         PrettyTime prettyTime = new PrettyTime();
         Instant instant = Instant.parse(news.getPublishedAt().format(DateTimeFormatter.ISO_INSTANT));
 
+        // Set the Pretty Time (Time ago)
         holder.date.setText(prettyTime.format(Date.from(instant)));
 
+        // Set the Image
         Picasso.get().load(news.getUrlImage())
                 .error(R.drawable.ic_date)
                 .into(holder.image);
-
     }
 
     /**
@@ -159,6 +167,7 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
      */
     @Override
     public int getItemCount() {
+
         return this.news.size();
     }
 
@@ -168,15 +177,28 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
      */
     protected static class ViewHolder extends RecyclerView.ViewHolder{
 
+        // The Author TextView
         TextView author;
+
+        // The Title TextView
         TextView title;
+
+        // The Description TextView
         TextView description;
+
+        // The Date TextView
         TextView date;
+
+        // The Image ImageView
         ImageView image;
 
-
+        /**
+         * Constructor of ViewHolder.
+         * @param view The view to use.
+         */
         public ViewHolder(View view){
             super(view);
+            // Set the views in the parameters.
             this.author = view.findViewById(R.id.cv_tv_author);
             this.title = view.findViewById(R.id.cv_tv_title);
             this.description = view.findViewById(R.id.cv_tv_description);
