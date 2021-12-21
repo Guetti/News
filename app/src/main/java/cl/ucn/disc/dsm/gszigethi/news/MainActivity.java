@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kwabenaberko.newsapilib.NewsApiClient;
 import com.kwabenaberko.newsapilib.models.Article;
+import com.kwabenaberko.newsapilib.models.Source;
 import com.kwabenaberko.newsapilib.models.request.TopHeadlinesRequest;
 import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
 
@@ -80,66 +81,97 @@ public class MainActivity extends AppCompatActivity {
         // Build the Adapter
         this.newsAdapter = new NewsAdapter();
 
+        // Union of Adapter + RecyclerView
+        recyclerView.setAdapter(this.newsAdapter);
+
+        //AsyncTask.execute(this::loadNews);
+
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        loadNews();
+    }
+
+    /**
+     * Get the news from newsapi.org
+     */
+    private void loadNews(){
         newsApiClient.getTopHeadlines(
                 new TopHeadlinesRequest.Builder()
-                        .q("bitcoin")
-                        .language("en")
+                        .language("es")
                         .build(),
                 new NewsApiClient.ArticlesResponseCallback() {
                     @Override
                     public void onSuccess(ArticleResponse response) {
-                        //System.out.println(response.getArticles().get(0).getTitle());
+                        System.out.println(response.getArticles());
                         articles = response.getArticles();
+
+
+                        for (int i = 0; i < articles.size(); i++){
+                            // Validate Author
+                            if (articles.get(i).getAuthor() == null || articles.get(i).getAuthor().length() < 3){
+                                articles.get(i).setAuthor("Autor desconocido");
+                            }
+
+                            // Validate Title
+                            if (articles.get(i).getTitle() == null || articles.get(i).getTitle().length() < 2){
+                                articles.get(i).setTitle("Titulo desconocido");
+                            }
+
+                            // Validate Source
+                            if (articles.get(i).getSource() == null){
+                                Source source  = new Source();
+                                source.setName("Fuente desconocida");
+                                articles.get(i).setSource(source);
+                            }
+
+                            // Validate Url
+                            if (articles.get(i).getUrl() == null){
+                                articles.get(i).setUrl("Url desonocida");
+                            }
+
+                            // Validate Url Image
+                            if (articles.get(i).getUrlToImage() == null){
+                                articles.get(i).setUrlToImage("Url de imagen desconocida");
+                            }
+
+                            // Validate Description
+                            if (articles.get(i).getDescription() == null){
+                                articles.get(i).setDescription("Descripcion desconocida");
+                            }
+
+                            ZonedDateTime zonedDateTime = ZonedDateTime.parse(articles.get(i).getPublishedAt()).withZoneSameInstant(ZoneId.of("-4"));
+                            News theNews = new News(
+                                    articles.get(i).getTitle(),
+                                    articles.get(i).getSource().getName(),
+                                    articles.get(i).getAuthor(),
+                                    articles.get(i).getUrl(),
+                                    articles.get(i).getUrlToImage(),
+                                    articles.get(i).getDescription(),
+                                    "No Content",
+                                    zonedDateTime
+                            );
+                            newsAdapter.addNews(theNews);
+                        }
+
+                        newsAdapter.notifyDataSetChanged();
+
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
+                        System.out.println("Error al recuperar noticias: ");
                         System.out.println(throwable.getMessage());
 
                     }
                 }
         );
 
-        // TODO: Remove this.
-        // Create news for testing
-        // Create the zoned date time as now
-        ZonedDateTime zonedDateTime = ZonedDateTime.now(ZoneId.of("-4"));
 
-        // Create the list of news
-        List<News> newsList = new ArrayList<>();
 
-        // Create some news
-        News news1 = new News("ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", "ABCDE", zonedDateTime);
-        News news2 = new News(
-                "Windows 11: Windows Terminal wird neuer Standard für Kommandozeilen - ComputerBase",
-                "ComputerBase",
-                "Nicolas La Rocco",
-                "https://www.computerbase.de/2021-12/windows-11-windows-terminal-wird-neuer-standard-fuer-kommandozeilen/",
-                "https://pics.computerbase.de/1/0/1/7/0/7-576982f7519a42a4/article-1280x720.32d2af39.jpg",
-                "Microsoft will kommendes Jahr das Windows Terminal zum neuen Standard in Windows 11 für Kommandozeilenbefehle und Scripts machen.",
-                "Microsoft will kommendes Jahr das Windows Terminal zum neuen Standard in Windows 11 für Kommandozeilenbefehle und Scripts machen.",
-                zonedDateTime
-        );
-        News news3 = new News(
-                "Disney Plus adds support for Apple’s new SharePlay feature - The Siasat Daily",
-                "The Siasat Daily",
-                "IANS",
-                "https://www.siasat.com/disney-plus-adds-support-for-apples-new-shareplay-feature-2242300/",
-                "https://cdn.siasat.com/wp-content/uploads/2021/12/Disney-1.jpg",
-                "Disney has updated its subscription video on demand (SVOD) mobile app Disney Plus streaming with support for Apple's SharePlay feature.",
-                "Disney has updated its subscription video on demand (SVOD) mobile app Disney Plus streaming with support for Apple's SharePlay feature.",
-                zonedDateTime
-        );
-
-        // Add the news to the list of news
-        newsList.add(news1);
-        newsList.add(news2);
-        newsList.add(news3);
-
-        // Set the news into the adapter
-        this.newsAdapter.setNews(newsList);
-
-        // Union of Adapter + RecyclerView
-        recyclerView.setAdapter(this.newsAdapter);
     }
 }
