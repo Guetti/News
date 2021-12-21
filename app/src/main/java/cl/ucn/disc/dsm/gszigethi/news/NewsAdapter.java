@@ -36,6 +36,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import org.ocpsoft.prettytime.PrettyTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
+import java.sql.Date;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,9 +141,10 @@ public final class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHold
         holder.title.setText(news.getTitle());
         holder.description.setText(news.getDescription());
 
-        String time = news.getPublishedAt().getYear() + "-" + news.getPublishedAt().getMonthValue() + "-" + news.getPublishedAt().getDayOfMonth();
+        PrettyTime prettyTime = new PrettyTime();
+        Instant instant = Instant.parse(news.getPublishedAt().format(DateTimeFormatter.ISO_INSTANT));
 
-        holder.date.setText(time);
+        holder.date.setText(prettyTime.format(Date.from(instant)));
 
         Picasso.get().load(news.getUrlImage())
                 .error(R.drawable.ic_date)
