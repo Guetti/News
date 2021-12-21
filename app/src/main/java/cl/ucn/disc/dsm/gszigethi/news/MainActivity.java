@@ -39,7 +39,6 @@ import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
@@ -63,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
      */
     protected NewsAdapter newsAdapter;
 
-    List<Article> articles = new ArrayList<>();
     /**
      *
      * @param savedInstanceState the state.
@@ -86,33 +84,33 @@ public class MainActivity extends AppCompatActivity {
         // Union of Adapter + RecyclerView
         recyclerView.setAdapter(this.newsAdapter);
 
-        //AsyncTask.execute(this::loadNews);
-
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        loadNews();
+        this.loadNews();
     }
 
     /**
      * Get the news from newsapi.org
      */
     private void loadNews(){
+
+        // Retrieve the top headlines from newsapi.org
         newsApiClient.getTopHeadlines(
                 new TopHeadlinesRequest.Builder()
                         .language("es")
+                        .pageSize(100)
                         .build(),
                 new NewsApiClient.ArticlesResponseCallback() {
                     @Override
+                    // if success
                     public void onSuccess(ArticleResponse response) {
-                        System.out.println(response.getArticles());
-                        articles = response.getArticles();
+                        // Save the articles
+                        List<Article> articles = response.getArticles();
 
-
+                        // For each Article parse to News
                         for (int i = 0; i < articles.size(); i++){
                             // Validate Author
                             if (articles.get(i).getAuthor() == null || articles.get(i).getAuthor().length() < 3){
@@ -146,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
                                 articles.get(i).setDescription("Descripcion desconocida");
                             }
 
+                            // Transform the zoned date time to local hour (GMT-4)
                             ZonedDateTime zonedDateTime = ZonedDateTime.parse(articles.get(i).getPublishedAt()).withZoneSameInstant(ZoneId.of("-4"));
                             News theNews = new News(
                                     articles.get(i).getTitle(),
@@ -157,16 +156,17 @@ public class MainActivity extends AppCompatActivity {
                                     "No Content",
                                     zonedDateTime
                             );
+                            // Add the news to the adapter
                             newsAdapter.addNews(theNews);
                         }
-
+                        // Refresh the news adapter
                         newsAdapter.notifyDataSetChanged();
 
                     }
 
                     @Override
+                    // If failure
                     public void onFailure(Throwable throwable) {
-                        System.out.println("Error al recuperar noticias: ");
                         System.out.println(throwable.getMessage());
 
                     }
