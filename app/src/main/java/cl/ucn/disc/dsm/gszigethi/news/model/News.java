@@ -52,7 +52,7 @@ public final class News {
     @Getter
     private final String source;
     /**
-     * The Autor.
+     * The Author.
      */
     @Getter
     private final String author;
