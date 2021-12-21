@@ -24,6 +24,7 @@
 
 package cl.ucn.disc.dsm.gszigethi.news;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,6 +41,7 @@ import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 
 import java.util.List;
+import java.util.Objects;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
 import lombok.extern.slf4j.Slf4j;
@@ -70,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getSupportActionBar().hide();
+
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         // Get the List (RecyclerView).
         final RecyclerView recyclerView = findViewById(R.id.rv_news_list);
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         .pageSize(100)
                         .build(),
                 new NewsApiClient.ArticlesResponseCallback() {
+                    @SuppressLint("NotifyDataSetChanged")
                     @Override
                     // if success
                     public void onSuccess(ArticleResponse response) {
