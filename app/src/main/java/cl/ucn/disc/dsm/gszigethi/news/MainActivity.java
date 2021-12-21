@@ -24,50 +24,45 @@
 
 package cl.ucn.disc.dsm.gszigethi.news;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.widget.TextView;
-
-import com.github.javafaker.Faker;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-
+import com.kwabenaberko.newsapilib.NewsApiClient;
+import com.kwabenaberko.newsapilib.models.Article;
+import com.kwabenaberko.newsapilib.models.request.TopHeadlinesRequest;
+import com.kwabenaberko.newsapilib.models.response.ArticleResponse;
 
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import cl.ucn.disc.dsm.gszigethi.news.model.News;
-
-import cl.ucn.disc.dsm.gszigethi.news.services.retrofit.JsonPlaceHolderApi;
 import lombok.extern.slf4j.Slf4j;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 @Slf4j
 public class MainActivity extends AppCompatActivity {
+
+    /**
+     * The API KEY from newsapi.org.
+     */
+    String API_KEY = "a80f0e7d2efb4580b1b049815f8456ac";
+
+    /**
+     * The News Api Client.
+     */
+    NewsApiClient newsApiClient = new NewsApiClient(API_KEY);
 
     /**
      * The News Adapter
      */
     protected NewsAdapter newsAdapter;
 
+    List<Article> articles = new ArrayList<>();
     /**
      *
      * @param savedInstanceState the state.
@@ -85,7 +80,25 @@ public class MainActivity extends AppCompatActivity {
         // Build the Adapter
         this.newsAdapter = new NewsAdapter();
 
+        newsApiClient.getTopHeadlines(
+                new TopHeadlinesRequest.Builder()
+                        .q("bitcoin")
+                        .language("en")
+                        .build(),
+                new NewsApiClient.ArticlesResponseCallback() {
+                    @Override
+                    public void onSuccess(ArticleResponse response) {
+                        //System.out.println(response.getArticles().get(0).getTitle());
+                        articles = response.getArticles();
+                    }
 
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        System.out.println(throwable.getMessage());
+
+                    }
+                }
+        );
 
         // TODO: Remove this.
         // Create news for testing
@@ -129,65 +142,4 @@ public class MainActivity extends AppCompatActivity {
         // Union of Adapter + RecyclerView
         recyclerView.setAdapter(this.newsAdapter);
     }
-
-    /**
-     * Get the news from NewsApi.org
-     */
-    // TODO: Get the news from news api
-    private void getNews(){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://newsapi.org/v2/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        JsonPlaceHolderApi jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        Call<List<News>> call = jsonPlaceHolderApi.getNews();
-        call.enqueue(new Callback<List<News>>() {
-            @Override
-            public void onResponse(Call<List<News>> call, Response<List<News>> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<List<News>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    // FIXME: Error when load from json file
-    /*
-    protected void onStart(){
-        super.onStart();
-        AsyncTask.execute(() -> {
-            List<News> theNews;
-            try (final InputStream is = super.getApplication().getAssets()
-                    .open("news.json")) {
-                // Get the Type of List<News> with reflection
-                final Type newsListType = new TypeToken<List<News>>(){}.getType();
-
-                // The Reader
-                final Reader reader = new InputStreamReader(is);
-
-                // The json to object converter
-                final Gson gson = new GsonBuilder().create();
-
-                // Google Gson Black magic.
-                theNews = gson.fromJson(reader, newsListType);
-
-            } catch (IOException e){
-                e.printStackTrace();
-                return;
-            }
-
-            // Populate the adapter
-            this.newsAdapter.setNews(theNews);
-
-            // Notify / Update the GUI
-            runOnUiThread(() -> {
-                // Run in UI thread
-                this.newsAdapter.notifyDataSetChanged();
-            });
-        });
-    }
-    */
 }
