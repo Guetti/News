@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
 
         // Get the List (RecyclerView).
         final RecyclerView recyclerView = findViewById(R.id.rv_news_list);
